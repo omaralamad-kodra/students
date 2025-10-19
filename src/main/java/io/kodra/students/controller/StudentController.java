@@ -25,4 +25,8 @@ public class StudentController {
     public List<Student> getStudents() {
         return repository.findAll();
     }
+    @GetMapping("/{id}")
+    public Student getStudentById(@PathVariable Long id) {
+        return repository.findById(id).orElseThrow(() -> new RuntimeException("Student not found"));
+    }
 }
