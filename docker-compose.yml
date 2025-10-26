@@ -1,0 +1,16 @@
+services:
+  app:
+    image: students:v7
+    ports:
+      - 8080:8080
+    environment:
+      DB_URL: jdbc:mariadb://mariadb:3306/kodra_students
+      DB_USER: root
+      DB_PASSWORD: 1234
+  mariadb:
+    image: mariadb:latest
+    volumes: 
+      - /home/omar/db/data:/var/lib/mysql
+    environment:
+      MARIADB_DATABASE: kodra_students
+      MARIADB_ROOT_PASSWORD: 1234
