@@ -1,0 +1,4 @@
+FROM alpine:latest
+RUN apk update && apk add openjdk21-jdk
+COPY ./target/students-0.0.1-SNAPSHOT.jar .
+ENTRYPOINT ["java","-jar", "students-0.0.1-SNAPSHOT.jar"]

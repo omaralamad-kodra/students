@@ -1,7 +1,11 @@
-FROM ubuntu
-RUN apt update -y
-RUN apt install openjdk-21-jdk -y
-RUN java -version
-COPY ./target/students-0.0.1-SNAPSHOT.jar .
-ENTRYPOINT ["java","-jar"]
-CMD ["students-0.0.1-SNAPSHOT.jar"]
+### Builder Image
+FROM maven:latest AS build
+WORKDIR /build
+COPY . .
+RUN mvn clean install -Dmaven.test.skip=true
+
+####APP Image
+FROM alpine:latest
+RUN apk update && apk add openjdk21-jdk
+COPY --from=build /build/target/*.jar ./app.jar
+ENTRYPOINT ["java","-jar", "app.jar"]
