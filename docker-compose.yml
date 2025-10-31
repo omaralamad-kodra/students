@@ -1,6 +1,6 @@
 services:
   app:
-    image: students:v7
+    image: students:alpine
     ports:
       - 8080:8080
     environment:
