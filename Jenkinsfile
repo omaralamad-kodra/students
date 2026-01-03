@@ -1,6 +1,5 @@
 pipeline {
-  label 'java_builder'
-  defaultContainer 'builder'
+  agent { label 'java_builder' }
 
   environment {
     // ---- App / Image ----
