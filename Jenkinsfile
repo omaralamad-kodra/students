@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'java-builder' }
+  agent { label 'java_builder' }
 
   environment {
     // ---- App / Image ----
