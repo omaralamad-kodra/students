@@ -12,11 +12,6 @@ pipeline {
     MAVEN_OPTS    = "-Dmaven.repo.local=.m2/repository"
   }
 
-  options {
-    timestamps()
-    disableConcurrentBuilds()
-  }
-
   stages {
 
     stage('Checkout') {
