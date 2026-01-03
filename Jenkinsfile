@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'java-builder'
+        label 'java_builder'
     }
 
     stages {
