@@ -41,6 +41,8 @@ pipeline {
       steps {
         sh '''
           set -euxo pipefail
+          dockerd --host=unix:///var/run/docker.sock >/tmp/dockerd.log 2>&1 &
+          sleep 2
           docker version
           docker build -t "$FULL_IMAGE" .
         '''
