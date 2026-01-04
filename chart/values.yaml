@@ -25,7 +25,7 @@ fullnameOverride: ""
 envFrom:
   configMap:
     enabled: true
-    name: students-app-config
+    name: students-service-by-jenkins-students-app-config
   secret:
     enabled: true
     name: students-app-secret
