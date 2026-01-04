@@ -1,6 +1,5 @@
 pipeline {
   agent { label 'java_builder' }
-
   environment {
     // ---- App / Image ----
     APP_NAME      = "students-service"
@@ -34,7 +33,6 @@ pipeline {
         }
       }
     }
-    
     stage('Build') {
       steps {
         sh '''
@@ -48,7 +46,6 @@ pipeline {
         }
       }
     }
-
     stage('Docker Build & Push') {
       steps {
         withCredentials([usernamePassword(
@@ -79,8 +76,6 @@ pipeline {
         }
       }
     }
-
-
     stage('Deploy Helm') {
       steps {
         sh '''
@@ -96,7 +91,6 @@ pipeline {
       }
     }
   }
-
   post {
     success {
       echo "✅ Deployed ${FULL_IMAGE} with Helm release ${HELM_RELEASE} in namespace ${HELM_NS}"
@@ -105,4 +99,4 @@ pipeline {
       echo "❌ Pipeline failed"
     }
   }
-}
+}  
