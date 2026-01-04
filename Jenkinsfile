@@ -19,36 +19,37 @@ pipeline {
       }
     }
 
-    stage('Build & Test') {
+    stage('Test') {
       steps {
         sh '''
           set -euxo pipefail
           java -version
           mvn -version
-          mvn -B clean test package
+          mvn -B clean test
         '''
       }
       post {
         always {
           junit 'target/surefire-reports/*.xml'
+        }
+      }
+    }
+    
+    stage('Build') {
+      steps {
+        sh '''
+          set -euxo pipefail
+          mvn -B -DskipTests package
+        '''
+      }
+      post {
+        always {
           archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
         }
       }
     }
 
-    stage('Docker Build') {
-      steps {
-        sh '''
-          set -euxo pipefail
-          dockerd --host=unix:///var/run/docker.sock >/tmp/dockerd.log 2>&1 &
-          sleep 2
-          docker version
-          docker build -t "$FULL_IMAGE" .
-        '''
-      }
-    }
-
-    stage('Docker Push') {
+    stage('Docker Build & Push') {
       steps {
         withCredentials([usernamePassword(
           credentialsId: 'docker-registry-creds',
@@ -57,27 +58,40 @@ pipeline {
         )]) {
           sh '''
             set -euxo pipefail
+    
+            # Start Docker daemon (DinD) if it's not already running
+            if ! docker info >/dev/null 2>&1; then
+              dockerd --host=unix:///var/run/docker.sock >/tmp/dockerd.log 2>&1 &
+              # Wait for dockerd
+              for i in $(seq 1 30); do
+                docker info >/dev/null 2>&1 && break
+                sleep 1
+              done
+            fi
+    
+            docker version
+    
+            # Login + build + push
             echo "$REG_PASS" | docker login -u "$REG_USER" --password-stdin "$(echo "$IMAGE_REPO" | cut -d/ -f1)"
+            docker build -t "$FULL_IMAGE" .
             docker push "$FULL_IMAGE"
           '''
         }
       }
     }
 
+
     stage('Deploy Helm') {
       steps {
         sh '''
           set -euxo pipefail
           helm version
-          kubectl version --client
-
-          kubectl get ns "$HELM_NS" >/dev/null 2>&1 || kubectl create ns "$HELM_NS"
-
           helm upgrade --install "$HELM_RELEASE" ./chart \
             -n "$HELM_NS" \
             --set image.repository="$IMAGE_REPO" \
             --set image.tag="$IMAGE_TAG" \
-            --wait --timeout 10m
+            --wait --timeout 10m  \
+            --create-namespace
         '''
       }
     }
