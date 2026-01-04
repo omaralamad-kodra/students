@@ -3,13 +3,10 @@ pipeline {
 
   environment {
     // ---- App / Image ----
-    APP_NAME      = "my-java-service"
-    IMAGE_REPO    = "registry.example.com/my-team/my-java-service"   // change
+    APP_NAME      = "students-service"
+    IMAGE_REPO    = "docker.io/omaralamad/students-service"
     IMAGE_TAG     = "${env.BUILD_NUMBER}-${env.GIT_COMMIT.take(7)}"
     FULL_IMAGE    = "${IMAGE_REPO}:${IMAGE_TAG}"
-
-    // ---- Optional: Maven local repo cache inside workspace ----
-    MAVEN_OPTS    = "-Dmaven.repo.local=.m2/repository"
   }
 
   stages {
@@ -52,7 +49,7 @@ pipeline {
     stage('Docker Push') {
       steps {
         withCredentials([usernamePassword(
-          credentialsId: 'docker-registry-creds',  // create this in Jenkins
+          credentialsId: 'docker-registry-creds',
           usernameVariable: 'REG_USER',
           passwordVariable: 'REG_PASS'
         )]) {
