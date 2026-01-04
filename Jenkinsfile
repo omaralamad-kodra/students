@@ -8,6 +8,7 @@ pipeline {
     IMAGE_TAG     = "${env.BUILD_NUMBER}-${env.GIT_COMMIT.take(7)}"
     FULL_IMAGE    = "${IMAGE_REPO}:${IMAGE_TAG}"
     HELM_NS       = "students-service-by-jenkins"
+    HELM_RELEASE  = "students-service-by-jenkins"
   }
 
   stages {
@@ -72,7 +73,7 @@ pipeline {
 
           kubectl get ns "$HELM_NS" >/dev/null 2>&1 || kubectl create ns "$HELM_NS"
 
-          helm upgrade --install "$HELM_RELEASE" "$HELM_CHART" \
+          helm upgrade --install "$HELM_RELEASE" ./chart \
             -n "$HELM_NS" \
             --set image.repository="$IMAGE_REPO" \
             --set image.tag="$IMAGE_TAG" \
