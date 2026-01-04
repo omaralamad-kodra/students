@@ -7,6 +7,7 @@ pipeline {
     IMAGE_REPO    = "docker.io/omaralamad/students-service"
     IMAGE_TAG     = "${env.BUILD_NUMBER}-${env.GIT_COMMIT.take(7)}"
     FULL_IMAGE    = "${IMAGE_REPO}:${IMAGE_TAG}"
+    HELM_NS       = "students-service-by-jenkins"
   }
 
   stages {
