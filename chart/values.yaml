@@ -28,7 +28,7 @@ envFrom:
     name: students-service-by-jenkins-students-app-config
   secret:
     enabled: true
-    name: students-service-by-jenkins-students-app-config
+    name: students-app-secret
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
   # Specifies whether a service account should be created.
